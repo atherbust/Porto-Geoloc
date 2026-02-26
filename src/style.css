@@ -1,8 +1,12 @@
 @import "tailwindcss";
 
 /* Custom fonts and base styles */
+@theme {
+  --font-sans: 'Open Sans', system-ui, -apple-system, sans-serif;
+}
+
 :root {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Open Sans', system-ui, -apple-system, sans-serif;
 }
 
 body {

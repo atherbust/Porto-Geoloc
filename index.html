@@ -10,7 +10,7 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+  <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
     rel="stylesheet">
 
   <!-- Phosphor Icons -->
@@ -31,10 +31,7 @@
       <!-- Navigation (Header) -->
       <nav class="max-w-7xl mx-auto mb-8 md:mb-10 flex justify-between items-center">
         <div class="flex items-center gap-3">
-          <div
-            class="h-10 w-10 flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm border border-slate-100">
-            <img src="/logo.webp" alt="Logo" class="h-full w-full object-contain p-1">
-          </div>
+          <img src="/logo.webp" alt="Logo" class="h-10 w-auto object-contain drop-shadow-sm">
           <div>
             <h1 class="text-xl font-bold tracking-tight text-slate-800">Porto Geoloc</h1>
             <p class="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Sales Panel</p>
@@ -63,13 +60,8 @@
             <p class="text-slate-500 mt-1 text-base md:text-lg">Gerencie as localizações enviadas.</p>
           </div>
           <div class="flex gap-3">
-            <button onclick="window.showUniversalQRCode()"
-              class="inline-flex items-center justify-center gap-2 bg-white border-2 border-slate-100 hover:border-slate-200 text-slate-600 px-6 py-4 rounded-xl font-bold transition-all active:scale-95 group">
-              <i class="ph-bold ph-qr-code text-lg"></i>
-              QR do Balcão
-            </button>
             <button onclick="document.getElementById('modal-overlay').classList.remove('hidden')"
-              class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold shadow-xl shadow-blue-100 transition-all active:scale-95 group">
+              class="hidden md:inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold shadow-xl shadow-blue-100 transition-all active:scale-95 group">
               <i class="ph-bold ph-plus text-lg group-hover:rotate-90 transition-transform"></i>
               Nova Entrega
             </button>
