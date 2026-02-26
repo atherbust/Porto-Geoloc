@@ -166,7 +166,11 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (tbody) tbody.addEventListener('click', handleCardClick);
   if (cardContainer) cardContainer.addEventListener('click', handleCardClick);
+
+  // Initialize animated nav pill cleanly
+  setTimeout(() => window.switchMobileTab('home'), 100);
 });
+
 
 async function criarEntrega(nome, telefone, rua, bairro, numero, referencia) {
   // Generate random 4-digit numeric code
@@ -329,6 +333,61 @@ window.showUniversalQRCode = () => {
 }
 
 // Expose functions for buttons
+window.switchMobileTab = (tabId) => {
+  // Hide all main views
+  document.querySelectorAll('.page-view').forEach(p => p.classList.add('hidden'));
+  document.getElementById(`view-${tabId}`).classList.remove('hidden');
+
+  // Handle Pill Animation
+  const btn = document.getElementById(`nav-btn-${tabId}`);
+  const bg = document.getElementById('nav-pill-bg');
+
+  if (btn && bg) {
+    bg.style.width = btn.offsetWidth + 'px';
+    bg.style.transform = `translateX(${btn.offsetLeft}px)`;
+  }
+
+  // Update Buttons UI
+  document.querySelectorAll('.nav-btn').forEach(b => {
+    const textEl = b.querySelector('.nav-text');
+    const isTarget = b.id === `nav-btn-${tabId}`;
+
+    // Text and Icon classes
+    if (isTarget) {
+      b.classList.add('text-white');
+      b.classList.remove('text-[#A1A1AA]', 'hover:text-[#D4D4D8]');
+      if (textEl) {
+        textEl.classList.remove('max-w-0', 'opacity-0');
+        textEl.classList.add('max-w-[100px]', 'opacity-100');
+      }
+    } else {
+      b.classList.remove('text-white');
+      b.classList.add('text-[#A1A1AA]', 'hover:text-[#D4D4D8]');
+      if (textEl) {
+        textEl.classList.remove('max-w-[100px]', 'opacity-100');
+        textEl.classList.add('max-w-0', 'opacity-0');
+      }
+    }
+
+    // specific hack for the plus badge matching
+    const plusBg = b.querySelector('.nav-plus-badge');
+    const badgeIcon = b.querySelector('.badge-icon');
+    if (plusBg && badgeIcon) {
+      if (isTarget) {
+        plusBg.classList.replace('bg-[#18181B]', 'bg-blue-600');
+        plusBg.classList.replace('border-[#18181B]', 'border-blue-600');
+        badgeIcon.classList.replace('text-[#A1A1AA]', 'text-white');
+      } else {
+        plusBg.classList.replace('bg-blue-600', 'bg-[#18181B]');
+        plusBg.classList.replace('border-blue-600', 'border-[#18181B]');
+        badgeIcon.classList.replace('text-white', 'text-[#A1A1AA]');
+      }
+    }
+  });
+
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
 window.refreshEntregas = async () => {
   await refreshData();
 }
@@ -361,7 +420,14 @@ window.handleCreateEntrega = async () => {
   );
 
   if (result) {
-    document.getElementById('modal-overlay').classList.add('hidden');
+    if (window.innerWidth < 768) {
+      window.switchMobileTab('home');
+    } else {
+      // if desktop, it is still hiding the view directly or switch works? 
+      // We use switchMobileTab('home') for all since desktop uses it too.
+      window.switchMobileTab('home');
+    }
+
     nomeInput.value = '';
     telInput.value = '';
     if (ruaInput) ruaInput.value = '';
