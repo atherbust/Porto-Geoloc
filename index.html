@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Porto Geoloc - Entregas do Dia</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <!-- QRCode.js -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+
+<body class="selection:bg-blue-100 italic-selection:bg-blue-200">
+  <div id="app">
+    <!-- Main Container: min-h-[100dvh] and lateral padding of 16px (px-4) -->
+    <div
+      class="min-h-[100dvh] bg-[#F8FAFC] px-4 py-6 md:p-8 font-sans antialiased text-slate-900 overflow-x-hidden pb-24 md:pb-8">
+
+      <!-- Navigation (Header) -->
+      <nav class="max-w-7xl mx-auto mb-8 md:mb-10 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+          <div
+            class="h-10 w-10 flex items-center justify-center overflow-hidden rounded-lg bg-white shadow-sm border border-slate-100">
+            <img src="/logo.webp" alt="Logo" class="h-full w-full object-contain p-1">
+          </div>
+          <div>
+            <h1 class="text-xl font-bold tracking-tight text-slate-800">Porto Geoloc</h1>
+            <p class="text-[9px] uppercase tracking-[0.2em] text-slate-400 font-bold">Sales Panel</p>
+          </div>
+        </div>
+
+        <!-- Desktop User Info -->
+        <div class="hidden md:flex items-center gap-6">
+          <div class="text-right">
+            <p class="text-sm font-semibold text-slate-700">João Silva</p>
+            <p class="text-xs text-slate-400">Unidade Matriz</p>
+          </div>
+          <div
+            class="h-11 w-11 rounded-full bg-white border border-slate-200 flex items-center justify-center cursor-pointer hover:bg-slate-50 transition-all border-dashed shadow-sm">
+            <i class="ph ph-user text-slate-600 text-lg"></i>
+          </div>
+        </div>
+      </nav>
+
+      <main class="max-w-7xl mx-auto animate-fade-in">
+
+        <!-- Header Section -->
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 md:mb-12">
+          <div>
+            <h2 class="text-2xl md:text-3xl font-extrabold text-slate-900 tracking-tight">Entregas ativas</h2>
+            <p class="text-slate-500 mt-1 text-base md:text-lg">Gerencie as localizações enviadas.</p>
+          </div>
+          <div class="flex gap-3">
+            <button onclick="window.showUniversalQRCode()"
+              class="inline-flex items-center justify-center gap-2 bg-white border-2 border-slate-100 hover:border-slate-200 text-slate-600 px-6 py-4 rounded-xl font-bold transition-all active:scale-95 group">
+              <i class="ph-bold ph-qr-code text-lg"></i>
+              QR do Balcão
+            </button>
+            <button onclick="document.getElementById('modal-overlay').classList.remove('hidden')"
+              class="inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-xl font-bold shadow-xl shadow-blue-100 transition-all active:scale-95 group">
+              <i class="ph-bold ph-plus text-lg group-hover:rotate-90 transition-transform"></i>
+              Nova Entrega
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6 mb-8 md:mb-12">
+          <div
+            class="bg-white p-6 md:p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow group animate-fade-in delay-100 opacity-0 fill-mode-forwards">
+            <p class="text-slate-400 font-bold text-[10px] md:text-xs uppercase tracking-widest mb-1 md:mb-2">Pendentes
+            </p>
+            <h3 id="stat-pendentes" class="text-3xl md:text-4xl font-black text-slate-800">00</h3>
+          </div>
+
+          <div
+            class="bg-white p-6 md:p-8 rounded-2xl border border-slate-100 shadow-sm hover:shadow-md transition-shadow group animate-fade-in delay-200 opacity-0 fill-mode-forwards">
+            <p class="text-slate-400 font-bold text-[10px] md:text-xs uppercase tracking-widest mb-1 md:mb-2">
+              Localizadas</p>
+            <h3 id="stat-localizadas" class="text-3xl md:text-4xl font-black text-slate-800">00</h3>
+          </div>
+        </div>
+
+        <!-- Table Section -->
+        <div
+          class="bg-white rounded-2xl border border-slate-100 shadow-md md:shadow-xl shadow-slate-200/50 overflow-hidden animate-fade-in delay-300 opacity-0 fill-mode-forwards">
+          <div
+            class="px-6 py-4 md:px-8 md:py-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/30">
+            <h4 class="font-bold text-slate-800">Pedidos recentes</h4>
+          </div>
+
+          <!-- Desktop Table view: Visible only on md and up -->
+          <div class="hidden md:block overflow-x-auto">
+            <table class="w-full">
+              <thead>
+                <tr class="text-left border-b border-slate-50">
+                  <th class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Cliente / ID</th>
+                  <th class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Código</th>
+                  <th class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest">Status</th>
+                  <th class="px-8 py-5 text-[10px] font-bold text-slate-400 uppercase tracking-widest text-right">
+                    Localização
+                  </th>
+                </tr>
+              </thead>
+              <tbody id="pedidos-tbody" class="divide-y divide-slate-50">
+                <!-- Dynamic desktop content -->
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mobile Card view: Visible only on small screens -->
+          <div id="pedidos-cards-mobile" class="md:hidden flex flex-col gap-4 p-4">
+            <!-- Dynamic mobile cards -->
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <!-- Bottom Navigation Bar (Mobile Only) -->
+    <div
+      class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-6 py-3 flex justify-between items-center md:hidden z-50 shadow-[0_-4px_20px_0_rgba(0,0,0,0.05)] backdrop-blur-lg bg-white/90">
+      <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
+        class="flex flex-col items-center gap-1 text-blue-600">
+        <i class="ph-fill ph-house-simple text-2xl"></i>
+        <span class="text-[10px] font-bold uppercase tracking-tighter">Início</span>
+      </button>
+
+      <!-- Main Floating Action Button in Nav -->
+      <button onclick="document.getElementById('modal-overlay').classList.remove('hidden')"
+        class="bg-blue-600 w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200 -mt-10 border-4 border-[#F8FAFC]">
+        <i class="ph-bold ph-plus text-2xl"></i>
+      </button>
+
+      <button class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors">
+        <i class="ph ph-user-circle text-2xl"></i>
+        <span class="text-[10px] font-bold uppercase tracking-tighter">Perfil</span>
+      </button>
+    </div>
+
+    <!-- Modal Nova Entrega -->
+    <div id="modal-overlay"
+      class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[60] flex items-end md:items-center justify-center hidden p-0 md:p-4"
+      onclick="if(event.target === this) this.classList.add('hidden')">
+      <div
+        class="bg-white w-full max-w-lg rounded-t-3xl md:rounded-2xl shadow-2xl animate-fade-in overflow-hidden border border-white/20">
+        <div
+          class="px-8 py-6 md:px-10 md:py-8 border-b border-slate-50 flex justify-between items-center bg-slate-50/50">
+          <div>
+            <h3 class="text-xl md:text-2xl font-black text-slate-800 tracking-tight">Nova Entrega</h3>
+            <p class="text-xs md:text-sm text-slate-500 font-medium">Cadastre um novo pedido de localização.</p>
+          </div>
+          <button onclick="document.getElementById('modal-overlay').classList.add('hidden')"
+            class="h-10 w-10 flex items-center justify-center rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-600 hover:border-slate-300 transition-all shadow-sm">
+            <i class="ph-bold ph-x text-xl"></i>
+          </button>
+        </div>
+        <div class="px-8 py-6 md:px-10 md:py-8 space-y-6 overflow-y-auto max-h-[70vh]">
+          <div class="space-y-2">
+            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Nome do
+              Cliente</label>
+            <div class="relative">
+              <i class="ph ph-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input type="text" id="input-nome" placeholder="Ex: Ricardo Costa"
+                class="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-semibold placeholder:font-medium text-base h-[56px]" />
+            </div>
+          </div>
+          <div class="space-y-2">
+            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Telefone
+              (WhatsApp)</label>
+            <div class="relative">
+              <i class="ph ph-whatsapp-logo absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input type="tel" id="input-telefone" inputmode="numeric" placeholder="(81) 98877-6655"
+                class="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-semibold placeholder:font-medium text-base h-[56px]" />
+            </div>
+          </div>
+
+          <!-- Endereço Section -->
+          <div class="space-y-2 pt-2">
+            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Rua /
+              Logradouro</label>
+            <div class="relative">
+              <i class="ph ph-map-pin absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input type="text" id="input-rua" placeholder="Av. Principal ou Rua..."
+                class="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-semibold placeholder:font-medium text-base h-[56px]" />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-3 gap-4">
+            <div class="col-span-2 space-y-2">
+              <label class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Bairro</label>
+              <div class="relative">
+                <i class="ph ph-buildings absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                <input type="text" id="input-bairro" placeholder="Centro..."
+                  class="w-full pl-12 pr-4 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-semibold placeholder:font-medium text-base h-[56px]" />
+              </div>
+            </div>
+            <div class="space-y-2">
+              <label class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">n°</label>
+              <div class="relative">
+                <input type="text" id="input-numero" placeholder="123"
+                  class="w-full px-4 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-semibold placeholder:font-medium text-base h-[56px] text-center" />
+              </div>
+            </div>
+          </div>
+
+          <div class="space-y-2 pt-2">
+            <label class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Ponto de
+              Referência</label>
+            <div class="relative">
+              <i class="ph ph-flag absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+              <input type="text" id="input-referencia" placeholder="Ex: Próximo à padaria..."
+                class="w-full pl-12 pr-6 py-4 bg-slate-50 border border-slate-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:bg-white outline-none transition-all font-semibold placeholder:font-medium text-base h-[56px]" />
+            </div>
+          </div>
+        </div>
+        <div
+          class="p-6 md:p-10 bg-slate-50/50 border-t border-slate-100 md:bg-white md:border-none sticky bottom-0 left-0 right-0">
+          <button id="btn-confirmar" onclick="window.handleCreateEntrega()"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white min-h-[56px] py-4 rounded-xl font-black shadow-xl shadow-blue-100 transition-all active:scale-95 flex items-center justify-center gap-3 tracking-wide">
+            <span>Criar Solicitação</span>
+            <i class="ph-bold ph-arrow-right text-lg"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Opções do Pedido (Bottom Sheet Mobile) -->
+    <div id="modal-order-options"
+      class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[65] flex items-end md:items-center justify-center hidden p-0 md:p-4"
+      onclick="if(event.target === this) this.classList.add('hidden')">
+      <div
+        class="bg-white w-full max-w-sm rounded-t-[2.5rem] md:rounded-3xl shadow-2xl overflow-hidden animate-slide-up md:animate-fade-in border border-white/20">
+
+        <!-- Grab Bar (Mobile only) -->
+        <div class="h-1.5 w-12 bg-slate-200 rounded-full mx-auto mt-4 md:hidden"></div>
+
+        <div class="px-8 py-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/30 mt-2 md:mt-0">
+          <div>
+            <h4 id="options-client-name" class="text-xl font-black text-slate-800 tracking-tight">Opções do
+              Pedido
+            </h4>
+            <div class="flex items-center gap-2 mt-1">
+              <span id="options-order-id"
+                class="text-[10px] font-black bg-slate-100 text-slate-500 px-2 py-0.5 rounded-md uppercase tracking-wider">ID:
+                #0000</span>
+            </div>
+          </div>
+          <button onclick="document.getElementById('modal-order-options').classList.add('hidden')"
+            class="h-10 w-10 flex items-center justify-center rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-600 transition-all shadow-sm">
+            <i class="ph-bold ph-x text-xl"></i>
+          </button>
+        </div>
+
+        <div class="p-6 md:p-8 space-y-3">
+          <button id="btn-view-details"
+            class="w-full flex items-center justify-center p-4 bg-slate-50 hover:bg-slate-900 text-slate-600 hover:text-white rounded-2xl transition-all font-bold border border-slate-100 hover:border-slate-900">
+            <span>Ver dados da entrega</span>
+          </button>
+
+          <button id="btn-open-maps"
+            class="w-full flex items-center justify-center p-4 bg-slate-50 hover:bg-green-600 text-slate-600 hover:text-white rounded-2xl transition-all font-bold border border-slate-100 hover:border-green-600">
+            <span>Abrir Google Maps</span>
+          </button>
+
+          <button id="btn-share-option"
+            class="w-full flex items-center justify-center p-4 bg-slate-50 hover:bg-blue-600 text-slate-600 hover:text-white rounded-2xl transition-all font-bold border border-slate-100 hover:border-blue-600">
+            <span>Compartilhar Link</span>
+          </button>
+        </div>
+
+        <!-- Padding for mobile bottom -->
+        <div class="h-6 md:hidden"></div>
+      </div>
+    </div>
+
+    <!-- Modal Compartilhar (QR & Link) -->
+    <div id="modal-share"
+      class="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[70] flex items-center justify-center hidden p-4"
+      onclick="if(event.target === this) this.classList.add('hidden')">
+      <div
+        class="bg-white w-full max-w-xs rounded-3xl shadow-2xl overflow-hidden animate-fade-in border border-slate-100">
+        <div class="p-6 text-center border-b border-slate-50">
+          <h4 class="font-black text-slate-800 tracking-tight">Compartilhar Acesso</h4>
+        </div>
+        <div class="p-2 space-y-1">
+          <button onclick="window.showQRCode()"
+            class="w-full flex items-center gap-3 p-4 hover:bg-slate-50 rounded-2xl transition-all group text-slate-600 font-bold">
+            <div
+              class="h-10 w-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center group-hover:bg-blue-600 group-hover:text-white transition-colors">
+              <i class="ph-bold ph-qr-code text-xl"></i>
+            </div>
+            <span>Mostrar QR Code</span>
+          </button>
+          <button onclick="window.copyDeliveryLink()"
+            class="w-full flex items-center gap-3 p-4 hover:bg-slate-50 rounded-2xl transition-all group text-slate-600 font-bold">
+            <div
+              class="h-10 w-10 bg-slate-100 text-slate-500 rounded-xl flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-colors">
+              <i class="ph-bold ph-link text-xl"></i>
+            </div>
+            <span>Copiar Link</span>
+          </button>
+        </div>
+        <button onclick="document.getElementById('modal-share').classList.add('hidden')"
+          class="w-full py-4 text-xs font-black text-slate-400 uppercase tracking-widest hover:text-slate-600 transition-colors">
+          Fechar
+        </button>
+      </div>
+    </div>
+
+    <!-- Modal QR Code Display -->
+    <div id="modal-qrcode-display"
+      class="fixed inset-0 bg-white z-[80] flex flex-col items-center justify-center hidden p-8 animate-fade-in">
+
+      <div id="qrcode-container" class="p-8 bg-white border-2 border-slate-100 rounded-[2rem] mb-12"></div>
+
+      <button onclick="document.getElementById('modal-qrcode-display').classList.add('hidden')"
+        class="bg-slate-900 text-white px-12 py-4 rounded-2xl font-black shadow-xl transition-all active:scale-95 tracking-[0.1em]">
+        FECHAR
+      </button>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast"
+      class="fixed bottom-24 left-1/2 -translate-x-1/2 bg-slate-900 text-white px-6 py-3 rounded-2xl text-sm font-bold shadow-2xl transition-all opacity-0 pointer-events-none z-[100] translate-y-4">
+      Link copiado com sucesso!
+    </div>
+
+    <!-- Modal Detalhes da Entrega -->
+    <div id="modal-details"
+      class="fixed inset-0 bg-slate-900/60 backdrop-blur-md z-[75] flex items-end md:items-center justify-center hidden p-0 md:p-4"
+      onclick="if(event.target === this) this.classList.add('hidden')">
+      <div
+        class="bg-white w-full max-w-lg rounded-t-[2.5rem] md:rounded-3xl shadow-2xl overflow-hidden animate-slide-up md:animate-fade-in border border-white/20 flex flex-col max-h-[90vh]">
+
+        <!-- Grab Bar -->
+        <div class="h-1.5 w-12 bg-slate-200 rounded-full mx-auto mt-4 md:hidden"></div>
+
+        <div class="px-8 py-6 border-b border-slate-50 flex justify-between items-center bg-slate-50/30 mt-2 md:mt-0">
+          <h4 class="text-xl font-black text-slate-800 tracking-tight">Detalhes da Entrega</h4>
+          <button onclick="document.getElementById('modal-details').classList.add('hidden')"
+            class="h-10 w-10 flex items-center justify-center rounded-full bg-white border border-slate-200 text-slate-400 hover:text-slate-600 transition-all shadow-sm">
+            <i class="ph-bold ph-x text-xl"></i>
+          </button>
+        </div>
+
+        <div class="p-8 space-y-8 overflow-y-auto">
+          <!-- Info Section -->
+          <div class="space-y-8">
+
+            <!-- Cliente -->
+            <div class="flex items-start gap-4">
+              <div class="h-10 w-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center shrink-0">
+                <i class="ph-fill ph-user text-xl"></i>
+              </div>
+              <div>
+                <label
+                  class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5">Cliente</label>
+                <p id="details-nome" class="text-xl font-bold text-slate-800 tracking-tight leading-tight">---</p>
+              </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="h-px bg-slate-100 w-full"></div>
+
+            <!-- Endereço Grid -->
+            <div class="space-y-6">
+              <div class="flex items-start gap-4">
+                <div class="h-10 w-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center shrink-0">
+                  <i class="ph-fill ph-map-pin text-xl"></i>
+                </div>
+                <div class="flex-1">
+                  <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5">Rua /
+                    Logradouro</label>
+                  <p id="details-rua" class="text-base font-semibold text-slate-700 leading-tight">---</p>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 pl-14">
+                <div>
+                  <label
+                    class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5">Bairro</label>
+                  <p id="details-bairro" class="text-base font-semibold text-slate-700">---</p>
+                </div>
+                <div>
+                  <label
+                    class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5">Número</label>
+                  <p id="details-numero" class="text-base font-semibold text-slate-700">---</p>
+                </div>
+              </div>
+
+              <div class="pl-14 pt-2">
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] mb-0.5">Ponto
+                  de
+                  Referência</label>
+                <p id="details-referencia" class="text-base font-semibold text-slate-700 italic">---</p>
+              </div>
+            </div>
+
+            <!-- Divider -->
+            <div class="h-px bg-slate-100 w-full"></div>
+
+            <!-- Photo Section -->
+            <div class="space-y-4">
+              <div class="flex items-center gap-4">
+                <div class="h-10 w-10 bg-slate-50 text-slate-400 rounded-xl flex items-center justify-center shrink-0">
+                  <i class="ph-fill ph-camera text-xl"></i>
+                </div>
+                <label class="block text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Foto da
+                  Fachada</label>
+              </div>
+
+              <div
+                class="aspect-video w-full rounded-[2.5rem] overflow-hidden bg-slate-100 border border-slate-100 group relative">
+                <img id="details-photo" src="" alt="Foto da Entrega" onclick="window.zoomPhoto(this.src)"
+                  class="w-full h-full object-cover cursor-pointer hover:scale-105 transition-transform duration-700">
+                <div id="details-photo-empty"
+                  class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 hidden">
+                  <i class="ph ph-image-square text-4xl mb-2"></i>
+                  <p class="text-xs font-bold uppercase tracking-widest">Sem foto capturada</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Visualização de Foto (Full Screen) -->
+    <div id="modal-photo-zoom"
+      class="fixed inset-0 bg-slate-900/95 backdrop-blur-xl z-[100] flex items-center justify-center hidden p-4 sm:p-8"
+      onclick="this.classList.add('hidden')">
+
+      <button
+        class="absolute top-6 right-6 h-12 w-12 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-all z-[110]">
+        <i class="ph-bold ph-x text-2xl"></i>
+      </button>
+
+      <div class="relative w-full h-full flex items-center justify-center animate-fade-in">
+        <img id="zoom-img" src=""
+          class="max-w-full max-h-full object-contain rounded-lg shadow-2xl border border-white/10"
+          onclick="event.stopPropagation()">
+      </div>
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+</body>
+
+</html>

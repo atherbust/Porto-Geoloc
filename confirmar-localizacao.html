@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Porto Geoloc - Enviar Localização</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <!-- Phosphor Icons -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <link rel="stylesheet" href="/src/style.css" />
+</head>
+
+<body class="bg-white text-slate-900 font-sans antialiased min-h-[100dvh] flex flex-col">
+
+    <main class="flex-1 flex flex-col items-center justify-center p-6 text-center">
+
+        <!-- Branding -->
+        <div class="mb-12">
+            <div
+                class="h-16 w-16 bg-blue-600 rounded-2xl flex items-center justify-center shadow-xl shadow-blue-100 mx-auto mb-4">
+                <img src="/logo.webp" alt="Logo" class="h-10 w-10 object-contain p-1 invert brightness-0">
+            </div>
+            <h1 class="text-3xl font-black tracking-tighter text-slate-900">PORTO GEOLOC</h1>
+            <p class="text-slate-500 font-bold uppercase tracking-widest text-xs mt-2">Confirmação de Entrega</p>
+        </div>
+
+        <!-- Step 1: Access Code Verification -->
+        <div id="step-auth" class="w-full max-w-sm space-y-8 animate-fade-in">
+            <div class="space-y-4 text-center">
+                <i class="ph-bold ph-lock-key text-blue-600 text-5xl mb-2"></i>
+                <h2 class="text-3xl font-black leading-tight text-slate-800">Acesso Protegido</h2>
+                <p class="text-lg text-slate-500 font-medium px-4">Insira o código de 4 dígitos para validar seu pedido.
+                </p>
+            </div>
+
+            <!-- Code Input (4 boxes) -->
+            <div class="flex justify-center gap-4">
+                <input type="tel" maxlength="1" inputmode="numeric"
+                    class="code-input w-16 h-20 text-center text-4xl font-black bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-50/50 outline-none transition-all shadow-sm" />
+                <input type="tel" maxlength="1" inputmode="numeric"
+                    class="code-input w-16 h-20 text-center text-4xl font-black bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-50/50 outline-none transition-all shadow-sm" />
+                <input type="tel" maxlength="1" inputmode="numeric"
+                    class="code-input w-16 h-20 text-center text-4xl font-black bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-50/50 outline-none transition-all shadow-sm" />
+                <input type="tel" maxlength="1" inputmode="numeric"
+                    class="code-input w-16 h-20 text-center text-4xl font-black bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-50/50 outline-none transition-all shadow-sm" />
+            </div>
+
+            <button id="btn-verify-code"
+                class="w-full bg-slate-900 border-b-4 border-slate-950 hover:bg-black text-white py-6 rounded-2xl font-black text-xl shadow-xl transition-all active:scale-95 active:border-b-0 uppercase tracking-widest">
+                Validar Código
+            </button>
+
+            <p class="text-xs text-slate-400 font-bold uppercase tracking-widest">
+                Solicite o código ao vendedor se não o possuir.
+            </p>
+        </div>
+
+        <!-- Step 2: Location Capture (Hidden by default) -->
+        <div id="step-location" class="hidden w-full max-w-sm space-y-6 animate-fade-in text-left">
+            <div class="space-y-1 text-center mb-8">
+                <h2 class="text-3xl font-black leading-tight text-slate-900 tracking-tight">Quase pronto!</h2>
+                <p class="text-slate-500 font-medium px-4">Confirme seu local e, se possível, envie uma foto.</p>
+            </div>
+
+            <!-- Photo Upload Area -->
+            <div class="space-y-2">
+                <label class="block text-xs font-black text-slate-400 uppercase tracking-widest ml-1">Foto da Fachada
+                    (Opcional)</label>
+                <div id="photo-dropzone" class="relative group cursor-pointer">
+                    <input type="file" id="input-photo" accept="image/*" capture="environment" class="hidden" />
+                    <div id="photo-preview-container"
+                        class="w-full aspect-video bg-slate-50 border-2 border-dashed border-slate-200 rounded-[2rem] flex flex-col items-center justify-center transition-all group-hover:border-blue-300 group-hover:bg-blue-50/30 overflow-hidden">
+                        <div id="photo-placeholder" class="text-center p-6">
+                            <i
+                                class="ph-fill ph-camera text-4xl text-slate-300 group-hover:text-blue-400 transition-colors"></i>
+                            <p
+                                class="text-xs font-bold text-slate-400 group-hover:text-blue-500 mt-2 uppercase tracking-widest">
+                                Tirar Photo</p>
+                        </div>
+                        <img id="photo-preview" class="hidden w-full h-full object-cover" />
+
+                        <!-- Remove button hidden by default -->
+                        <button id="btn-remove-photo"
+                            class="hidden absolute top-4 right-4 h-8 w-8 bg-black/50 backdrop-blur-md text-white rounded-full flex items-center justify-center hover:bg-red-500 transition-all">
+                            <i class="ph-bold ph-x text-sm"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Subtle Send Button -->
+            <div class="pt-4">
+                <button id="btn-send-location"
+                    class="w-full bg-blue-600 hover:bg-blue-700 text-white min-h-[64px] py-4 rounded-2xl font-black shadow-xl shadow-blue-100 transition-all active:scale-95 flex flex-col items-center justify-center gap-1 tracking-wide">
+                    <span class="text-lg uppercase tracking-tight">Confirmar Localização</span>
+                    <span class="text-[10px] opacity-70 font-bold uppercase tracking-[0.2em]">O GPS será capturado
+                        agora</span>
+                </button>
+            </div>
+
+            <p
+                class="text-[10px] text-slate-400 font-bold flex items-center justify-center gap-2 uppercase tracking-widest text-center pt-4">
+                <i class="ph-bold ph-shield-check text-green-500 text-sm"></i>
+                Dados protegidos via SSL
+            </p>
+        </div>
+
+        <!-- Loading State (Hidden by default) -->
+        <div id="loading-area"
+            class="hidden fixed inset-0 bg-white z-50 flex flex-col items-center justify-center p-10">
+            <div class="relative mb-8">
+                <div class="w-24 h-24 border-8 border-slate-100 border-t-blue-600 rounded-full animate-spin"></div>
+                <i
+                    class="ph-fill ph-map-pin absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-blue-600 text-4xl"></i>
+            </div>
+            <h3 class="text-2xl font-black text-slate-900 mb-2">Obtendo precisão máxima...</h3>
+            <p class="text-slate-500 font-bold">Por favor, mantenha o navegador aberto.</p>
+        </div>
+
+        <!-- Success State (Hidden by default) -->
+        <div id="success-area"
+            class="hidden fixed inset-0 bg-white z-50 flex flex-col items-center justify-center p-10">
+            <div
+                class="h-40 w-40 bg-green-500 text-white rounded-full flex items-center justify-center shadow-2xl shadow-green-100 mb-8 animate-bounce">
+                <i class="ph-bold ph-check text-7xl"></i>
+            </div>
+            <h3 class="text-3xl font-black text-slate-800 mb-2">Obrigado!</h3>
+            <p class="text-slate-600 text-xl font-bold">Localização recebida com sucesso</p>
+        </div>
+
+    </main>
+
+    <footer class="p-8 text-center border-t border-slate-50 bg-slate-50/30">
+        <p class="text-slate-400 text-[10px] font-bold uppercase tracking-[0.3em]">Porto Geoloc © 2026</p>
+    </footer>
+
+    <script type="module" src="/src/cliente.js"></script>
+</body>
+
+</html>
