@@ -120,24 +120,33 @@
       </main>
     </div>
 
-    <!-- Bottom Navigation Bar (Mobile Only) -->
+    <!-- Floating Bottom Navigation Bar (Mobile Only) -->
     <div
-      class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-100 px-6 py-3 flex justify-between items-center md:hidden z-50 shadow-[0_-4px_20px_0_rgba(0,0,0,0.05)] backdrop-blur-lg bg-white/90">
+      class="fixed bottom-6 left-1/2 -translate-x-1/2 w-[calc(100%-2.5rem)] max-w-sm bg-[#18181B] px-2.5 py-2.5 flex justify-between items-center md:hidden z-50 rounded-[2.5rem] shadow-[0_12px_40px_rgba(0,0,0,0.15)] border border-white/5 backdrop-blur-3xl">
+
+      <!-- Item 1: Home (Active Pill) -->
       <button onclick="window.scrollTo({top: 0, behavior: 'smooth'})"
-        class="flex flex-col items-center gap-1 text-blue-600">
-        <i class="ph-fill ph-house-simple text-2xl"></i>
-        <span class="text-[10px] font-bold uppercase tracking-tighter">Início</span>
+        class="flex items-center gap-2.5 bg-[#8257E5] text-white px-6 py-3 rounded-full transition-all active:scale-95 shadow-[0_4px_16px_rgba(130,87,229,0.3)] group">
+        <i class="ph-fill ph-house-simple text-[22px]"></i>
+        <span class="text-xs font-bold tracking-wide">Home</span>
       </button>
 
-      <!-- Main Floating Action Button in Nav -->
+      <!-- Item 2: Nova Entrega (Plus inside box) -->
       <button onclick="document.getElementById('modal-overlay').classList.remove('hidden')"
-        class="bg-blue-600 w-14 h-14 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-blue-200 -mt-10 border-4 border-[#F8FAFC]">
-        <i class="ph-bold ph-plus text-2xl"></i>
+        class="flex items-center justify-center p-3 text-[#A1A1AA] hover:text-[#D4D4D8] transition-colors active:scale-95 group">
+        <div class="relative">
+          <i class="ph ph-package text-[26px] group-hover:scale-105 transition-transform"></i>
+          <span
+            class="absolute -right-1 -top-1 bg-[#18181B] rounded-full border border-[#18181B] flex items-center justify-center w-3 h-3">
+            <i class="ph-bold ph-plus text-[10px] text-[#A1A1AA] group-hover:text-[#D4D4D8]"></i>
+          </span>
+        </div>
       </button>
 
-      <button class="flex flex-col items-center gap-1 text-slate-400 hover:text-slate-600 transition-colors">
-        <i class="ph ph-user-circle text-2xl"></i>
-        <span class="text-[10px] font-bold uppercase tracking-tighter">Perfil</span>
+      <!-- Item 3: Perfil -->
+      <button
+        class="flex items-center justify-center pr-5 pl-2 py-3 text-[#A1A1AA] hover:text-[#D4D4D8] transition-colors active:scale-95 group">
+        <i class="ph ph-user text-[26px] group-hover:scale-105 transition-transform"></i>
       </button>
     </div>
 
